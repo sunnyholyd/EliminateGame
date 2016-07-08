@@ -73,6 +73,7 @@ cc.Class({
     addTouchEvents:function(node){//添加触摸监听事件
         var p1=null;
         var p2=null;
+        window.console.log("m"+this);
         node.on('touchstart',function(event){//传回节点位置
             node.select=true;
             p1=node.getComponent('Element').pos;
@@ -95,12 +96,17 @@ cc.Class({
             if(this.isAround(p1,p2)&&typeof(this.stars[p2.x][p2.y])!='undefined'){
                 window.console.log('isAround');
                 this.changeTwoPos(p1,p2);
-                this.delAndDrop();
+                if(this.checkConnected()){
+                    this.delAndDrop();
+                }
+                
             }else{
                 node.setPosition(this.pSet[p1.x][p1.y]);
             }
             
         },this);
+
+        
         
     },
     PositionToPos:function(x,y){//屏幕坐标转矩阵坐标
@@ -129,19 +135,25 @@ cc.Class({
         
     },
     delAndDrop:function(){
-        this.checkConnected();
-        for(var i=0;i<this.Row;i++){
-            window.console.log(this.mask[i].toString());
-        }
+        // this.checkConnected();
+        // for(var i=0;i<this.Row;i++){
+        //     window.console.log(this.mask[i].toString());
+        // }
         
         this.deleteConnected();
         this.dropAndUpdata();
 
     },
     checkConnected:function(){
+        var count1=this.verticalCheckConnected();
+        var count2=this.horizontalCheckConnected();
+
+        return ((count1+count2)>0)?true:false;        
+    },
+    verticalCheckConnected:function(){//纵向检查star的相连形况
         var index1,index2;
         var start,end;
-        var count=0;
+        var count=0;//记录需要删除的star数
         for(var i=0;i<this.stars.length;i++){
             if(typeof(this.stars[i][0])=='undefined'){
                 continue;
@@ -161,6 +173,7 @@ cc.Class({
                         while(start!=end){
                             this.mask[i][start]=1;
                             start++;
+                            count++;
                         }
                     }
                     start=end;
@@ -171,6 +184,12 @@ cc.Class({
                 }
             }
         }
+        return count;
+    },
+    horizontalCheckConnected:function(){//横向检查star的相连情况
+        var index1,index2;
+        var start,end;
+        var count=0;//记录需删除的star数
         for(var j=0;j<this.Col;j++){
             for(var i=0;i<this.Row;){
                 if(typeof(this.stars[i][j])=='undefined'){
@@ -184,7 +203,10 @@ cc.Class({
                     if(typeof(this.stars[end][j])=='undefined'){
                         if(end-begin>=3){
                             while(begin!=end){ 
-                                this.mask[begin][j]=1;
+                                if(this.mask[begin][j]!=1){
+                                    this.mask[begin][j]=1;
+                                    count++;
+                                }
                                 begin++;
                             }
                         }
@@ -194,7 +216,10 @@ cc.Class({
                     if(index1!=index2){
                         if(end-begin>=3){
                             while(begin!=end){ 
-                                this.mask[begin][j]=1;
+                                if(this.mask[begin][j]!=1){
+                                    this.mask[begin][j]=1;
+                                    count++;
+                                }
                                 begin++;
                             }
                         }
@@ -204,7 +229,10 @@ cc.Class({
                 }
                 if(end==this.Row&&end-begin>=3){
                     while(begin!=end){ 
-                        this.mask[begin][j]=1;
+                        if(this.mask[begin][j]!=1){
+                            this.mask[begin][j]=1;
+                            count++;
+                        }
                         begin++;
                     }
                 }
@@ -212,13 +240,10 @@ cc.Class({
                 
             }
         }
-
+        return count;
     },
-    // finished:function(target,v2){
-    //     this.node.removeChild(this.stars[v2.x][v2.y]);
-    //     window.console.log('remove:'+v2.x+','+v2.y);
-    // },
-    deleteConnected:function(){
+
+    deleteConnected:function(){//根据mask的状态信息删除相连的star
         
         for(var i=0;i<this.Row;i++){
             var count=0;
@@ -243,15 +268,28 @@ cc.Class({
             }
         }
     },
+
     dropAndUpdata:function(){//下落动画以及更新位置信息
+        var finished=cc.callFunc(function(target){
+            if(this.checkConnected()){
+                this.delAndDrop();
+            }
+        },this);
+
         for(var i=0;i<this.stars.length;i++){
             for(var j=0;j<this.stars[i].length;j++){
-                var act=cc.moveTo(1,this.pSet[i][j]);
+                if(i==this.stars.length-1&&j==this.stars[i].length-1){
+                    var act=cc.sequence(cc.moveTo(1,this.pSet[i][j]),finished);
+                }else{
+                    var act=cc.moveTo(1,this.pSet[i][j]);
+                }
                 this.stars[i][j].runAction(act);
                 var com=this.stars[i][j].getComponent('Element');
                 com.pos=cc.v2(i,j);
+
             }
         }
+        
     }
     
 
