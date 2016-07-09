@@ -98,7 +98,6 @@
       "__id__": 1
     },
     "_enabled": true,
-    "index": 0,
     "icons": [
       {
         "__uuid__": "dcb47474-c2cb-4d63-a26f-7dbf33d26fe6"
@@ -112,7 +111,13 @@
       {
         "__uuid__": "77a48a64-4844-4516-8f0e-e338ca9cd1f9"
       }
-    ]
+    ],
+    "pos": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "sfIndex": 0
   },
   {
     "__type__": "cc.PrefabInfo",

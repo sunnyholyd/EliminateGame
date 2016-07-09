@@ -223,7 +223,7 @@
     "Padding": 10,
     "SpacingX": 10,
     "SpacingY": 10,
-    "element": {
+    "star": {
       "__uuid__": "054d9d6c-7538-45ae-bf7f-a755fd4367c5"
     },
     "Score": {
@@ -336,7 +336,8 @@
     "node": {
       "__id__": 7
     },
-    "_enabled": true
+    "_enabled": true,
+    "score": 0
   },
   {
     "__type__": "cc.Canvas",

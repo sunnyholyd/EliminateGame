@@ -16,7 +16,7 @@ cc.Class({
         Padding:0,
         SpacingX:0,
         SpacingY:0,
-        element:{
+        star:{
             default:null,
             type:cc.Prefab
         },
@@ -44,11 +44,11 @@ cc.Class({
             var arr1=[];
             var marr=[];
             for(var j=0;j<this.Col;j++){
-                var ele=cc.instantiate(this.element);
+                var ele=cc.instantiate(this.star);
                 ele.setPosition(pSet[i][j].x,pSet[i][j].y);
                 node.addChild(ele,0,"ele");
                 this.addTouchEvents(ele);
-                var com=ele.getComponent('Element');
+                var com=ele.getComponent('Star');
                 com.pos=cc.v2(i,j);
                 arr1.push(ele);
                 marr.push(0);
@@ -64,7 +64,7 @@ cc.Class({
     },
 
     buildCoordinateSet:function(){//根据配置信息生成每个元素的坐标点对象
-        var ele=cc.instantiate(this.element);
+        var ele=cc.instantiate(this.star);
         var eleSize=ele.getContentSize();
         var beginX=this.Padding+eleSize.width/2;
         var beginY=this.Padding+eleSize.height/2;
@@ -87,7 +87,7 @@ cc.Class({
         window.console.log("m"+this);
         node.on('touchstart',function(event){//传回节点位置
             node.select=true;
-            p1=node.getComponent('Element').pos;
+            p1=node.getComponent('Star').pos;
             window.console.log(p1);
         },this);
         node.on('touchmove',function(event){
@@ -121,7 +121,7 @@ cc.Class({
     },
     
     PositionToPos:function(x,y){//屏幕坐标转矩阵坐标
-        var ele=cc.instantiate(this.element);
+        var ele=cc.instantiate(this.star);
         var eleSize=ele.getContentSize();
         var pos=cc.v2(Math.floor((x-this.Padding)/(eleSize.width+this.SpacingX)),Math.floor((y-this.Padding)/(eleSize.height+this.SpacingY)));
         return pos;
@@ -135,9 +135,9 @@ cc.Class({
         return false;
     },
     changeTwoPos:function(p1,p2){//交换两个star的位置 包括自身存储的位置信息与stars数组内的实例交换
-        this.stars[p1.x][p1.y].getComponent('Element').pos=p2;
+        this.stars[p1.x][p1.y].getComponent('Star').pos=p2;
         this.stars[p1.x][p1.y].setPosition(this.pSet[p2.x][p2.y]);
-        this.stars[p2.x][p2.y].getComponent('Element').pos=p1;
+        this.stars[p2.x][p2.y].getComponent('Star').pos=p1;
         this.stars[p2.x][p2.y].setPosition(this.pSet[p1.x][p1.y]);
         var t=this.stars[p1.x][p1.y];
         this.stars[p1.x][p1.y]=this.stars[p2.x][p2.y];
@@ -172,13 +172,13 @@ cc.Class({
             if(typeof(this.stars[i][0])=='undefined'){
                 continue;
             }
-            index1=this.stars[i][0].getComponent('Element').sfIndex;
+            index1=this.stars[i][0].getComponent('Star').sfIndex;
             start=0;
             for(var j=1;j<=this.stars[i].length;j++){
                 if(j==this.stars[i].length){//当到达边界值时
                     index2=-1;
                 }else{
-                    index2=this.stars[i][j].getComponent('Element').sfIndex;
+                    index2=this.stars[i][j].getComponent('Star').sfIndex;
                 }
                 
                 if(index1!=index2){
@@ -192,7 +192,7 @@ cc.Class({
                     }
                     start=end;
                     if(start!=this.stars[i].length){
-                        index1=this.stars[i][start].getComponent('Element').sfIndex;
+                        index1=this.stars[i][start].getComponent('Star').sfIndex;
                     }
                     
                 }
@@ -210,7 +210,7 @@ cc.Class({
                     i++;
                     continue;
                 }
-                index1=this.stars[i][j].getComponent('Element').sfIndex;
+                index1=this.stars[i][j].getComponent('Star').sfIndex;
                 var begin=i;
                 end=begin;
                 while(end<this.Row){
@@ -226,7 +226,7 @@ cc.Class({
                         }
                         break;
                     }
-                    index2=this.stars[end][j].getComponent('Element').sfIndex;
+                    index2=this.stars[end][j].getComponent('Star').sfIndex;
                     if(index1!=index2){
                         if(end-begin>=3){
                             while(begin!=end){ 
@@ -299,7 +299,7 @@ cc.Class({
                     var act=cc.moveTo(1,this.pSet[i][j]);
                 }
                 this.stars[i][j].runAction(act);
-                var com=this.stars[i][j].getComponent('Element');
+                var com=this.stars[i][j].getComponent('Star');
                 com.pos=cc.v2(i,j);
 
             }
@@ -309,7 +309,6 @@ cc.Class({
     updateScore:function(){
         var score=this.Score.getComponent('Score');//更新分数显示
         score.setReward(this.reward);
-        window.console.log("r  "+this.reward);
         score.updateScore();
     }
 
