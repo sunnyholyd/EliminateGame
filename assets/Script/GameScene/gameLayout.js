@@ -19,14 +19,20 @@ cc.Class({
         element:{
             default:null,
             type:cc.Prefab
+        },
+        Score:{
+            default:null,
+            type:cc.Node
         }
     },
+    reward:0,
     pSet:null,//坐标矩阵集合
     stars:null,
     mask:null,
     onLoad: function () {
         this.buildCoordinateSet();//根据配置信息生成每个元素的坐标点集合
         this.init();
+        this.check();
         
     },
     init:function(){//初始化函数，生成star节点，添加监听事件
@@ -49,6 +55,11 @@ cc.Class({
             }
             this.mask.push(marr);
             this.stars.push(arr1);
+        }
+    },
+    check:function(){
+        if(this.checkConnected()){
+            this.delAndDrop();
         }
     },
 
@@ -96,9 +107,8 @@ cc.Class({
             if(this.isAround(p1,p2)&&typeof(this.stars[p2.x][p2.y])!='undefined'){
                 window.console.log('isAround');
                 this.changeTwoPos(p1,p2);
-                if(this.checkConnected()){
-                    this.delAndDrop();
-                }
+
+                this.check();//check
                 
             }else{
                 node.setPosition(this.pSet[p1.x][p1.y]);
@@ -109,6 +119,7 @@ cc.Class({
         
         
     },
+    
     PositionToPos:function(x,y){//屏幕坐标转矩阵坐标
         var ele=cc.instantiate(this.element);
         var eleSize=ele.getContentSize();
@@ -135,10 +146,6 @@ cc.Class({
         
     },
     delAndDrop:function(){
-        // this.checkConnected();
-        // for(var i=0;i<this.Row;i++){
-        //     window.console.log(this.mask[i].toString());
-        // }
         
         this.deleteConnected();
         this.dropAndUpdata();
@@ -148,7 +155,14 @@ cc.Class({
         var count1=this.verticalCheckConnected();
         var count2=this.horizontalCheckConnected();
 
-        return ((count1+count2)>0)?true:false;        
+        this.reward=this.calScore(count1+count2);//奖励分数
+        window.console.log(this.reward +"rew");
+
+        return ((count1+count2)>0)?true:false;
+    },
+    calScore:function(num){//计算分数
+        return num*10;
+
     },
     verticalCheckConnected:function(){//纵向检查star的相连形况
         var index1,index2;
@@ -267,13 +281,14 @@ cc.Class({
                 this.mask[i][j]=0;
             }
         }
+        this.updateScore();//更新分数显示
     },
 
     dropAndUpdata:function(){//下落动画以及更新位置信息
         var finished=cc.callFunc(function(target){
-            if(this.checkConnected()){
-                this.delAndDrop();
-            }
+            this.check();
+            
+            
         },this);
 
         for(var i=0;i<this.stars.length;i++){
@@ -290,7 +305,14 @@ cc.Class({
             }
         }
         
+    },
+    updateScore:function(){
+        var score=this.Score.getComponent('Score');//更新分数显示
+        score.setReward(this.reward);
+        window.console.log("r  "+this.reward);
+        score.updateScore();
     }
+
     
 
     // called every frame, uncomment this function to activate update callback
