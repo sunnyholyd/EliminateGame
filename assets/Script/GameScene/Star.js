@@ -19,6 +19,7 @@ cc.Class({
         pos:{
             default:new cc.Vec2
         },
+        number:0,
         sfIndex:0,
     },
     
@@ -33,7 +34,7 @@ cc.Class({
             var ratio=Math.random();
             return min+Math.floor((max-min)*ratio);
         }
-        this.sfIndex=getRandomInt(0,4);
+        this.sfIndex=getRandomInt(0,this.number);
         // window.console.log(this.index);
         var sprite=this.getComponent(cc.Sprite);
         sprite.spriteFrame=this.icons[this.sfIndex];
