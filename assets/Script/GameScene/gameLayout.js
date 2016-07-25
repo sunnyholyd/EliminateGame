@@ -281,13 +281,12 @@ cc.Class({
                 this.mask[i][j]=0;
             }
         }
-        this.updateScore();//更新分数显示
+        this.updateScore();//删除相连的stars后更新分数显示
     },
 
     dropAndUpdata:function(){//下落动画以及更新位置信息
         var finished=cc.callFunc(function(target){
             this.check();
-            
             
         },this);
 
