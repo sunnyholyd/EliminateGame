@@ -26,11 +26,9 @@ cc.Class({
         var com=this.node.getComponent(cc.Label);
         
         this.score+=this.reward;
-        window.console.log(this.score + "  aa");
         
         com.string="Score:"+this.score;
         
-        window.console.log(com.string);
     }
 
     // called every frame, uncomment this function to activate update callback

@@ -66,7 +66,7 @@ cc.Class({
     buildCoordinateSet:function(){//根据配置信息生成每个元素的坐标点对象
         var ele=cc.instantiate(this.star);
         var eleSize=ele.getContentSize();
-        var beginX=this.Padding+eleSize.width/2;
+        var beginX=(this.node.width-(this.Row-1)*(this.SpacingX+eleSize.width))/2;
         var beginY=this.Padding+eleSize.height/2;
         
         this.pSet=[];        
